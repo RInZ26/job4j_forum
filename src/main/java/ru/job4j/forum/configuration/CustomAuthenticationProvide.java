@@ -8,21 +8,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ru.job4j.forum.dao.mem.UserMem;
+import ru.job4j.forum.dao.repositories.UserRepository;
 import ru.job4j.forum.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component("memAuthProvider")
-public class MemoryAuthenticationProvider implements AuthenticationProvider {
+public class CustomAuthenticationProvide implements AuthenticationProvider {
 
-    private final UserMem userMem;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public MemoryAuthenticationProvider(UserMem userMem, @Lazy PasswordEncoder passwordEncoder) {
-        this.userMem = userMem;
+    public CustomAuthenticationProvide(UserRepository userRepository,
+                                       @Lazy PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -34,7 +35,7 @@ public class MemoryAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials()
                                         .toString();
 
-        User storedUser = userMem.findByName(name);
+        User storedUser = userRepository.findByUsername(name);
 
         if (storedUser != null && passwordEncoder.matches(password, storedUser.getPassword())) {
             result = new UsernamePasswordAuthenticationToken(name, password,

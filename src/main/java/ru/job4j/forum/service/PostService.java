@@ -2,41 +2,46 @@ package ru.job4j.forum.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.job4j.forum.dao.mem.PostMem;
+import ru.job4j.forum.dao.repositories.PostRepository;
 import ru.job4j.forum.model.Post;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Service
 public class PostService {
 
-    private final PostMem postMem;
+    private final PostRepository postRepository;
     private final TimeService timeService;
 
     @Autowired
-    public PostService(PostMem postMem, TimeService timeService) {
-        this.postMem = postMem;
+    public PostService(PostRepository postRepository, TimeService timeService) {
+        this.postRepository = postRepository;
         this.timeService = timeService;
     }
 
     public List<Post> findAll(boolean withSessionTimeZone) {
-        List<Post> posts = postMem.findAll();
+        Stream<Post> postStream = StreamSupport.stream(postRepository.findAll()
+                                                                     .spliterator(), false);
         if (withSessionTimeZone) {
-            posts = posts.stream()
-                         .map(timeService::changeTimeZoneToSession)
-                         .collect(Collectors.toList());
+            postStream = postStream.map(timeService::changeTimeZoneToSession);
         }
-        return posts;
+
+        return postStream.collect(Collectors.toList());
     }
 
     public Post findById(int id, boolean withSessionTimeZone) {
-        Post post = postMem.findById(id);
-        if (withSessionTimeZone) {
+        Post post = postRepository.findById(id)
+                                  .orElse(null);
+
+        if (withSessionTimeZone && post != null) {
             post = timeService.changeTimeZoneToSession(post);
         }
+
         return post;
     }
 
@@ -47,11 +52,11 @@ public class PostService {
         Integer id = post.getId();
         if (null == id) {
             post.setCreated(LocalDateTime.now(ZoneId.of("UTC")));
-            postMem.save(post);
+            postRepository.save(post);
         } else {
             Post oldPost = findById(id, false);
             post.setCreated(oldPost.getCreated());
-            postMem.change(id, post);
+            postRepository.save(post);
         }
     }
 }

@@ -14,10 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final MemoryAuthenticationProvider authProvider;
+    private final CustomAuthenticationProvide authProvider;
 
     @Autowired
-    public SecurityConfig(MemoryAuthenticationProvider authProvider) {
+    public SecurityConfig(CustomAuthenticationProvide authProvider) {
         this.authProvider = authProvider;
     }
 

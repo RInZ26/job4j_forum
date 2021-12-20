@@ -3,18 +3,18 @@ package ru.job4j.forum.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.job4j.forum.dao.mem.UserMem;
+import ru.job4j.forum.dao.repositories.UserRepository;
 import ru.job4j.forum.model.User;
 
 @Service
 public class UserService {
 
-    private final UserMem userMem;
+    private final UserRepository userRepository;
     private final PasswordEncoder encoder;
 
     @Autowired
-    public UserService(UserMem userMem, PasswordEncoder encoder) {
-        this.userMem = userMem;
+    public UserService(UserRepository userRepository, PasswordEncoder encoder) {
+        this.userRepository = userRepository;
         this.encoder = encoder;
     }
 
@@ -23,7 +23,7 @@ public class UserService {
 
         if (isRegAllowed(user)) {
             user.setPassword(encoder.encode(user.getPassword()));
-            userMem.save(user);
+            userRepository.save(user);
             result = true;
         }
 
@@ -31,6 +31,6 @@ public class UserService {
     }
 
     public boolean isRegAllowed(User user) {
-        return null == userMem.findByName(user.getUsername());
+        return null == userRepository.findByUsername(user.getUsername());
     }
 }
