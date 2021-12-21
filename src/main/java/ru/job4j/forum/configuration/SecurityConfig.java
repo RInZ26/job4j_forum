@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/login", "/reg", "/timeZone")
             .permitAll()
             .antMatchers("/**")
-            .access("hasAuthority('USER')")
+            .access("hasAuthority('ROLE_USER')")
             .and()
             .formLogin()
             .loginPage("/login")

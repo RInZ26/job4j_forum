@@ -10,12 +10,12 @@ import ru.job4j.forum.model.User;
 import ru.job4j.forum.service.UserService;
 
 @Controller
-public class RegControl {
+public class RegController {
 
     private final UserService userService;
 
     @Autowired
-    public RegControl(UserService userService) {
+    public RegController(UserService userService) {
         this.userService = userService;
     }
 

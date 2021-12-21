@@ -6,6 +6,7 @@ import ru.job4j.forum.util.SessionTimeZoneProvider;
 
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Optional;
 import java.util.TimeZone;
 
 @Service
@@ -32,14 +33,19 @@ public class TimeService {
 
     public Post changeTimeZoneToSession(Post post) {
         Post result = Post.of(post.getId(), post.getName(), post.getDescription());
+        ZoneId zoneId = Optional.ofNullable(sessionTimeZoneProvider.getZoneId())
+                                .orElse(ZoneId.of("UTC"));
+
         result.setCreated(post.getCreated()
                               .atZone(ZoneId.of("UTC"))
-                              .withZoneSameInstant(sessionTimeZoneProvider.getZoneId())
+                              .withZoneSameInstant(zoneId)
                               .toLocalDateTime());
         return result;
     }
 
     public TimeZone getSessionTimeZone() {
-        return TimeZone.getTimeZone(sessionTimeZoneProvider.getZoneId());
+        ZoneId zoneId = Optional.ofNullable(sessionTimeZoneProvider.getZoneId())
+                                .orElse(ZoneId.of("UTC"));
+        return TimeZone.getTimeZone(zoneId);
     }
 }
