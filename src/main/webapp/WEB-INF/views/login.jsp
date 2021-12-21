@@ -10,7 +10,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: 'http://localhost:8080/timeZone',
+                url: location.origin + '/timeZone',
                 data: {
                     "timeOffset": offSet
                 },

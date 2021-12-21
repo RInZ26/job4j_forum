@@ -21,7 +21,7 @@ public class TimeController {
         if (null != offset) {
             timeService.updateSessionZoneId(offset);
         }
-        return "index";
+        return "login";
     }
 
 }

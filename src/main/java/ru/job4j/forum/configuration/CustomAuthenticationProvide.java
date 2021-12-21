@@ -39,7 +39,7 @@ public class CustomAuthenticationProvide implements AuthenticationProvider {
 
         if (storedUser != null && passwordEncoder.matches(password, storedUser.getPassword())) {
             result = new UsernamePasswordAuthenticationToken(name, password,
-                    new ArrayList<>(List.of(() -> "USER")));
+                    new ArrayList<>(List.of(() -> "ROLE_USER")));
         }
 
         return result;
